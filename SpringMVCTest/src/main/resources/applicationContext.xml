@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:jpa="http://www.springframework.org/schema/data/jpa"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd
+		http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd">
+	<context:component-scan base-package="me.newsong" use-default-filters="false">
+		<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+		<context:exclude-filter type="annotation" expression="org.springframework.web.bind.annotation.ControllerAdvice"/>
+	</context:component-scan>
+
+	<!-- 配置数据源 -->
+	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+		<property name="driverClass" value="com.mysql.jdbc.Driver" />
+		<property name="jdbcUrl"
+			value="jdbc:mysql://localhost:3306/springmvc?serverTimezone=UTC" />
+		<property name="user" value="root" />
+		<property name="password" value="130119" />
+		<property name="initialPoolSize" value="10" />
+		<property name="maxPoolSize" value="20" />
+		<property name="minPoolSize" value="5" />
+	</bean>
+
+	<!-- 配置EntityManagerFactory -->
+	<bean id="entityManagerFactory"
+		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+		<property name="dataSource" ref="dataSource"></property>
+		<!-- 配置JPA提供商的适配器，可以通过内部bean的方式来配置 -->
+
+		<property name="jpaVendorAdapter">
+			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"></bean>
+		</property>
+		<!-- 配置实体类所在的包 -->
+		<property name="packagesToScan" value="me.newsong.domain"></property>
+		<!-- 配置JPA的基本属性 -->
+		<property name="jpaProperties">
+			<props>
+				<prop key="hibernate.format_sql">true</prop>
+				<prop key="hibernate.show_sql">true</prop>
+				<prop key="hibernate.hbm2ddl.auto">update</prop>
+				<prop key="hibernate.cache.use_second_level_cache">true</prop>
+				<prop key="hibernate.cache.region.factory_class">org.hibernate.cache.ehcache.SingletonEhCacheRegionFactory
+				</prop>
+				<prop key="hibernate.cache.use_query_cache">true</prop>
+			</props>
+		</property>
+		<property name="sharedCacheMode" value="ENABLE_SELECTIVE"></property>
+	</bean>
+
+	<!-- 配置声明式事务 -->
+	<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+		<property name="entityManagerFactory" ref="entityManagerFactory"></property>
+	</bean>
+
+	<!-- 基于注解 声明式事务管理配置 -->
+	<tx:annotation-driven transaction-manager="transactionManager" />
+
+	<!-- 配置Spring data -->
+	<jpa:repositories base-package="me.newsong.dao"
+		entity-manager-factory-ref="entityManagerFactory">
+	</jpa:repositories>
+	
+	<!-- 使用注解来配置AOP -->
+	<aop:aspectj-autoproxy></aop:aspectj-autoproxy>
+</beans>
