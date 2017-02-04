@@ -29,7 +29,7 @@
 	</servlet-mapping>
 
 
-	<!-- 字符编码过滤器 ，必须是第一个过滤器-->
+	<!-- 字符编码过滤器 ，必须是第一个过滤器 -->
 	<filter>
 		<filter-name>CharacterEncodingFilter</filter-name>
 		<filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
@@ -38,12 +38,21 @@
 			<param-value>UTF-8</param-value>
 		</init-param>
 	</filter>
-
 	<filter-mapping>
 		<filter-name>CharacterEncodingFilter</filter-name>
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
-		
-		
+	
+	
+	<filter>
+		<filter-name>HiddenHttpMethodFilter</filter-name>
+		<filter-class>org.springframework.web.filter.HiddenHttpMethodFilter</filter-class>
+	</filter>
+
+	<filter-mapping>
+		<filter-name>HiddenHttpMethodFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
 
 </web-app>

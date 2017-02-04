@@ -28,16 +28,11 @@ public class UserServlet extends BaseServlet {
 		ApplicationContext ctx = WebApplicationContextUtils.getWebApplicationContext(this.getServletContext());
 		UserService service = ctx.getBean(UserService.class);
 		String verifyCode = (String) request.getSession().getAttribute("verifyCode");
-		if (!user.getVerifyCode().trim().toUpperCase().equals(verifyCode)) {
-			request.setAttribute("status", "验证码错误");
+		try {
+			service.addUser(user);
+		} catch (UsernameExistedException e) {
+			request.setAttribute("status", "用户名重复");
 			return "Forward:/register.jsp";
-		} else {
-			try {
-				service.addUser(user);
-			} catch (UsernameExistedException e) {
-				request.setAttribute("status", "用户名重复");
-				return "Forward:/register.jsp";
-			}
 		}
 		return "Redirect:/index.jsp";
 	}
@@ -58,16 +53,16 @@ public class UserServlet extends BaseServlet {
 			return "Redirect:/index.jsp";
 		}
 	}
-	
-	public String activate(HttpServletRequest request, HttpServletResponse response){
+
+	public String activate(HttpServletRequest request, HttpServletResponse response) {
 		return null;
 	}
-	
-	public String modifyPassword(HttpServletRequest request, HttpServletResponse response){
+
+	public String modifyPassword(HttpServletRequest request, HttpServletResponse response) {
 		return null;
 	}
-	
-	public String exit(HttpServletRequest request, HttpServletResponse response){
+
+	public String exit(HttpServletRequest request, HttpServletResponse response) {
 		return null;
 	}
 }
