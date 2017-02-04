@@ -22,7 +22,7 @@
 			<param-value>classpath:/springmvc.xml</param-value>
 		</init-param>
 	</servlet>
-
+	
 	<servlet-mapping>
 		<servlet-name>springDispatcherServlet</servlet-name>
 		<url-pattern>/</url-pattern>

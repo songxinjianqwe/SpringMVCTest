@@ -1,4 +1,4 @@
-package me.newsong.service;
+package me.newsong.service.iface;
 
 import me.newsong.domain.User;
 import me.newsong.enums.UsernameExistedException;

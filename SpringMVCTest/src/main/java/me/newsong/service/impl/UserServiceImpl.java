@@ -1,4 +1,4 @@
-package me.newsong.service;
+package me.newsong.service.impl;
 
 import javax.transaction.Transactional;
 
@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import me.newsong.dao.UserRepository;
 import me.newsong.domain.User;
 import me.newsong.enums.UsernameExistedException;
+import me.newsong.service.iface.UserService;
 
 @Service("userService")
 public class UserServiceImpl implements UserService {
