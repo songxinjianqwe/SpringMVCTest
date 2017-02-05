@@ -1,6 +1,5 @@
 <%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%
 String path = request.getContextPath();
 String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
@@ -11,7 +10,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
   <head>
     <base href="<%=basePath%>">
     
-    <title>My JSP 'index.jsp' starting page</title>
+    <title>My JSP 'edit.jsp' starting page</title>
     
 	<meta http-equiv="pragma" content="no-cache">
 	<meta http-equiv="cache-control" content="no-cache">
@@ -25,8 +24,25 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
   </head>
   
   <body>
-  	<a href="<c:url value="/emps" />">List All Employees</a><br>
-  	<a href="<c:url value="/emp" />">Add New Employee</a>
-  	
+  	<form:form action="${pageContext.request.contextPath}/emp"  method="post" modelAttribute="employee">
+		<form:hidden path="id"/>
+		<input type="hidden" name="_method" value="PUT" />
+		<br> 
+		Email:<form:input path="email" />
+		<br> 
+		Gender:<form:radiobuttons path="gender" items="${genders }"/>
+		<br>
+		Department: 
+		<form:select path="dept.id" items="${depts }"  itemLabel="departmentName" itemValue="id">
+		</form:select>
+		<br>
+		Birthday:		
+		<form:input path="birthday"/>
+		<br>
+		Salary:
+		<form:input path="salary"/>
+		<br>
+		<input type="submit" value="修改员工信息"/>
+	</form:form>
   </body>
 </html>
