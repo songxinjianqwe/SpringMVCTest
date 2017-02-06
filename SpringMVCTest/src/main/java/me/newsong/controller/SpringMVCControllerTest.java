@@ -1,6 +1,5 @@
 package me.newsong.controller;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Arrays;
@@ -21,6 +20,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -29,15 +29,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import me.newsong.domain.Employee;
 import me.newsong.domain.User;
+import me.newsong.exceptions.UsernameNotExistedException;
 import me.newsong.service.iface.EmployeeService;
 import me.newsong.service.iface.UserService;
-import me.newsong.utils.CommonUtils;
 import me.newsong.utils.FileUploadUitl;
 
 @SessionAttributes(value = { "user" }, types = { String.class })
@@ -213,27 +214,78 @@ public class SpringMVCControllerTest {
 
 	@RequestMapping("/testI18n")
 	public String testI18n(Locale locale) {
-		String user  = messageSource.getMessage("i18n.username", null, locale);
+		String user = messageSource.getMessage("i18n.username", null, locale);
 		System.out.println(user);
 		return SUCCESS;
 	}
-	
+
 	@RequestMapping("/i18n")
 	public String i18n(@RequestParam("locale") Locale locale) {
-		String user  = messageSource.getMessage("i18n.username", null, locale);
+		String user = messageSource.getMessage("i18n.username", null, locale);
 		System.out.println(user);
 		return "i18n";
 	}
-	
+
 	@RequestMapping("/testFileUpload")
-	public String testFileUpload(@RequestParam("file") MultipartFile file,@RequestParam("desc") String desc,HttpSession session ){
-		try {
-			FileUploadUitl.upload(file, session.getServletContext());
-		} catch (IllegalStateException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+	public String testFileUpload(@RequestParam("file") MultipartFile file, @RequestParam("desc") String desc,
+			HttpSession session) throws IllegalStateException, IOException {
+		FileUploadUitl.upload(file, session.getServletContext());
 		return SUCCESS;
 	}
+
+	// 可以加入Exception类型的参数，该参数是发生的异常对象
+	// 参数中不能有Map，但可以有ModelAndView，用于传递异常至页面
+	// 标识的异常有优先级问题，先匹配较为具体的异常，再匹配较为宽泛的异常
+	@ExceptionHandler({ IllegalStateException.class, IOException.class })
+	public ModelAndView handleFileUploadException(Exception e) {
+		ModelAndView modelAndView = new ModelAndView("error");
+		modelAndView.addObject("exception", e);
+		return modelAndView;
+	}
+	
+	// *************************************************************************
+	@RequestMapping("/testExceptionHandlerExceptionResolver")
+	public String testExceptionHandlerExceptionResolver(@RequestParam("i") int i) {
+		System.out.println(10 / i);
+		return SUCCESS;
+	}
+
+	/*@ExceptionHandler({ ArithmeticException.class })
+	public ModelAndView handleArithmeticException(Exception e) {
+		ModelAndView modelAndView = new ModelAndView("error");
+		modelAndView.addObject("exception", e);
+		return modelAndView;
+	}*/
+	
+	@RequestMapping("/testResponseStatus")
+	public String testResponseStatus(@RequestParam("i") int i ){
+		if(i == 10){
+			throw new UsernameNotExistedException();
+		}
+		System.out.println("testResponseStatus OK!");
+		return SUCCESS;
+	}
+	
+	@ResponseStatus(value=HttpStatus.NOT_ACCEPTABLE,reason="用户名不存在")
+	@RequestMapping("/testResponseStatusForMethod")
+	public String testResponseStatusForMethod(@RequestParam("i") int i ){
+		if(i == 10){
+			throw new UsernameNotExistedException();
+		}
+		System.out.println("testResponseStatusForMethod OK!");
+		return SUCCESS;
+	}
+	
+	@RequestMapping(value="/testDefaultHandlerExceptionResolver",method=RequestMethod.POST)
+	public String testDefaultHandlerExceptionResolver(){
+		System.out.println("testDefaultHandlerExceptionResolver");
+		return SUCCESS;
+	}
+	@RequestMapping("/testSimpleMappingExceptionResolver")
+	public String testSimpleMappingExceptionResolver(@RequestParam("i") int i ){
+		String[] vals = new String[10];
+		System.out.println(vals[i]);
+		return SUCCESS;
+	}
+	
 }

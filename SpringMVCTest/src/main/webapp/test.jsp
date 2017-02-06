@@ -138,18 +138,27 @@
 	<br>
 	<a href="<c:url value="/springmvc/testI18n"/>">testI18n</a>
 	<br>
-	
+
 	<a href="<c:url value="/springmvc/i18n"/>">动态切换语言</a>
 	<br>
-	
-	
-	<form action="<c:url value='/springmvc/testFileUpload'/>"
-		method="post" enctype="multipart/form-data">
-		File:<input type="file" name="file" /><br> 
-		Description:
-		<input type="desc" name="desc" /><br> 
-		<input type="submit" value="上传">
+
+
+	<form action="<c:url value='/springmvc/testFileUpload'/>" method="post"
+		enctype="multipart/form-data">
+		File:<input type="file" name="file" /><br> Description: <input
+			type="desc" name="desc" /><br> <input type="submit" value="上传">
 	</form>
-	
+	<br>
+
+	<a href="<c:url value="/springmvc/testExceptionHandlerExceptionResolver?i=10"/>">testExceptionHandlerExceptionResolver</a>
+	<br>
+	<a href="<c:url value="/springmvc/testResponseStatus?i=10"/>">testResponseStatus</a>
+	<br>
+	<a href="<c:url value="/springmvc/testResponseStatusForMethod?i=10"/>">testResponseStatusForMethod</a>
+	<br>
+	<a href="<c:url value="/springmvc/testDefaultHandlerExceptionResolver"/>">testDefaultHandlerExceptionResolver</a>
+	<br>
+	<a href="<c:url value="/springmvc/testSimpleMappingExceptionResolver?i=8"/>">testSimpleMappingExceptionResolver</a>
+	<br>
 </body>
 </html>
